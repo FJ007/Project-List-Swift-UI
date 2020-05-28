@@ -9,8 +9,79 @@
 import SwiftUI
 
 struct ContentView: View {
+    
+    @State private var games = GamesFactory.games
+    @State private var showConfiguration = false
+    
     var body: some View {
-        Text("Hello, World!")
+        NavigationView {
+            List {
+                ForEach(games) { game in
+                    NavigationLink(destination: DetailView(game: game)) {
+                        CellView(game: game)
+                            .frame(width: 370, height: 215, alignment: .center)
+                            .contextMenu {
+                                Button(action: {
+                                    self.setFavorite(item: game)
+                                }) {
+                                    HStack{
+                                        Text(game.isFavorited ? "No Favorite" : "Favorite")
+                                        Image(systemName: game.isFavorited ? "heart" : "heart.fill")
+                                    }
+                                }
+                                Button(action: {
+                                    self.setFinished(item: game)
+                                }) {
+                                    HStack{
+                                        Text(game.isFinished ? "No Finished" : "Finished")
+                                        Image(systemName: game.isFinished ? "circle" : "checkmark.circle")
+                                    }
+                                }
+                                Button(action: {
+                                    self.deleted(item: game)
+                                }) {
+                                    HStack{
+                                        Text("Delete")
+                                        Image(systemName: "trash")
+                                    }
+                                }
+                            }
+                    }
+                }.onDelete { (indexSet) in
+                    self.games.remove(atOffsets: indexSet)
+                }
+            }
+            .navigationBarTitle(Text("Top Games"))
+            .navigationBarItems(trailing:
+                Button(action: {
+                    self.showConfiguration = true
+                }) {
+                   Image(systemName: "gear")
+                    .font(.title)
+                }
+            )
+            .sheet(isPresented: $showConfiguration) {
+                FilterView()
+            }
+        }
+    }
+    
+    private func setFavorite(item game: Game) {
+        if let index = games.firstIndex(where: {$0.id == game.id}) {
+           games[index].isFavorited.toggle()
+        }
+    }
+    
+    private func setFinished(item game: Game) {
+        if let index = games.firstIndex(where: {$0.id == game.id}) {
+            games[index].isFinished.toggle()
+        }
+    }
+    
+    private func deleted(item game: Game) {
+        if let index = games.firstIndex(where: {$0.id == game.id}) {
+            games.remove(at: index)
+        }
     }
 }
 
