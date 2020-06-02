@@ -10,10 +10,8 @@ import SwiftUI
 
 struct FilterView: View {
     
-    private var typesSorted = ["A-Z", "Z-A", "Rating"]
-    
     @Environment (\.presentationMode) var presentationModedMode
-    @State private var selectedSorted = 0
+    @State private var selectedSorted = SortingOrderType.alphabetical_AZ
     @State private var showOnlyFavorite = false
     @State private var showOnlyFinished = false
     @State private var showRating = false
@@ -33,8 +31,8 @@ struct FilterView: View {
             Form{
                 Section(header: Text("ORDER TYPE")) {
                     Picker(selection: $selectedSorted, label: Text("Select mode")) {
-                        ForEach(0..<self.typesSorted.count) {
-                            Text("\(self.typesSorted[$0])")
+                        ForEach(SortingOrderType.allCases, id:\.self) { typeOrder in
+                            Text("\(typeOrder.description)")
                         }
                     }
                 }
