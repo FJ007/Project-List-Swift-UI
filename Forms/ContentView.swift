@@ -10,6 +10,8 @@ import SwiftUI
 
 struct ContentView: View {
     
+    var defaults: SetupUserDefaults
+    
     @State private var games = GamesFactory.games
     @State private var showConfiguration = false
     
@@ -56,12 +58,13 @@ struct ContentView: View {
                 Button(action: {
                     self.showConfiguration = true
                 }) {
-                   Image(systemName: "gear")
-                    .font(.title)
+                   Image(systemName: "line.horizontal.3.decrease.circle")
+                    .font(.largeTitle)
+                    .foregroundColor(.black)
                 }
             )
             .sheet(isPresented: $showConfiguration) {
-                FilterView()
+                FilterView(defaults: self.defaults)
             }
         }
     }
@@ -87,6 +90,6 @@ struct ContentView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        ContentView(defaults: SetupUserDefaults())
     }
 }

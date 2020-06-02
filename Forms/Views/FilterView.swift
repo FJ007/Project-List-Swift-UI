@@ -10,7 +10,9 @@ import SwiftUI
 
 struct FilterView: View {
     
+    var defaults: SetupUserDefaults
     @Environment (\.presentationMode) var presentationModedMode
+    
     @State private var selectedSorted = SortingOrderType.alphabetical_AZ
     @State private var showOnlyFavorite = false
     @State private var showOnlyFinished = false
@@ -25,7 +27,6 @@ struct FilterView: View {
             }
         }
     }
-    
     var body: some View {
         NavigationView{
             Form{
@@ -69,15 +70,31 @@ struct FilterView: View {
                         self.presentationModedMode.wrappedValue.dismiss()
                     }) {
                         Image(systemName: "xmark")
+                            .foregroundColor(.black)
                     }
                 ,trailing:
                     Button(action: {
+                        // Save data
+                        self.defaults.sortedFilter = self.selectedSorted
+                        self.defaults.favoriteFilter = self.showOnlyFavorite
+                        self.defaults.finishedFilter = self.showOnlyFinished
+                        self.defaults.showRatingFilter = self.showRating
+                        self.defaults.ratingFilter = self.ratingStars
                         self.presentationModedMode.wrappedValue.dismiss()
                     }) {
                         Text("Done")
+                            .foregroundColor(.black)
                             .bold()
                     }
             )
+        }
+        .onAppear {
+            // Get Data
+            self.selectedSorted = self.defaults.sortedFilter
+            self.showOnlyFavorite = self.defaults.favoriteFilter
+            self.showOnlyFinished = self.defaults.finishedFilter
+            self.showRating = self.defaults.showRatingFilter
+            self.ratingStars = self.defaults.ratingFilter
         }
     }
 }
@@ -86,6 +103,6 @@ struct FilterView: View {
 
 struct FilterView_Previews: PreviewProvider {
     static var previews: some View {
-        FilterView()
+        FilterView(defaults: SetupUserDefaults())
     }
 }
