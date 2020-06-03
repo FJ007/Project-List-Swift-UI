@@ -10,7 +10,7 @@ import SwiftUI
 
 struct FilterView: View {
     
-    var defaults: SetupUserDefaults
+    @EnvironmentObject var defaults: UserPreferencesFilter
     @Environment (\.presentationMode) var presentationModedMode
     
     @State private var selectedSorted = SortingOrderType.alphabetical_AZ
@@ -30,14 +30,14 @@ struct FilterView: View {
     var body: some View {
         NavigationView{
             Form{
-                Section(header: Text("ORDER TYPE")) {
+                Section(header: Text("Order type".uppercased())) {
                     Picker(selection: $selectedSorted, label: Text("Select mode")) {
                         ForEach(SortingOrderType.allCases, id:\.self) { typeOrder in
                             Text("\(typeOrder.description)")
                         }
                     }
                 }
-                Section(header: Text("FILTER BY")) {
+                Section(header: Text("Filter by".uppercased())) {
                     Toggle(isOn: $showOnlyFavorite) {
                         Text("Favorites")
                     }
@@ -103,6 +103,6 @@ struct FilterView: View {
 
 struct FilterView_Previews: PreviewProvider {
     static var previews: some View {
-        FilterView(defaults: SetupUserDefaults())
+        FilterView().environmentObject(UserPreferencesFilter())
     }
 }

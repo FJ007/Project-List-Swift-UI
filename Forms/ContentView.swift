@@ -10,15 +10,16 @@ import SwiftUI
 
 struct ContentView: View {
     
-    var defaults: SetupUserDefaults
-    
+    @EnvironmentObject var filters: UserPreferencesFilter
     @State private var games = GamesFactory.games
     @State private var showConfiguration = false
     
     var body: some View {
         NavigationView {
             List {
-                ForEach(games) { game in
+                ForEach(games
+                    .filter(shouldApplyFilters)
+                    .sorted(by: filters.sortedFilter.sortingOrder())) { game in
                     NavigationLink(destination: DetailView(game: game)) {
                         CellView(game: game)
                             .frame(width: 370, height: 215, alignment: .center)
@@ -58,17 +59,18 @@ struct ContentView: View {
                 Button(action: {
                     self.showConfiguration = true
                 }) {
-                   Image(systemName: "line.horizontal.3.decrease.circle")
-                    .font(.largeTitle)
+                    Image(systemName: someApplyFilter() ? "line.horizontal.3.decrease.circle" : "line.horizontal.3.decrease.circle.fill")
+                    .font(.title)
                     .foregroundColor(.black)
                 }
             )
             .sheet(isPresented: $showConfiguration) {
-                FilterView(defaults: self.defaults)
+                FilterView().environmentObject(self.filters)
             }
         }
     }
     
+    // MARK: - Funcs
     private func setFavorite(item game: Game) {
         if let index = games.firstIndex(where: {$0.id == game.id}) {
            games[index].isFavorited.toggle()
@@ -86,10 +88,24 @@ struct ContentView: View {
             games.remove(at: index)
         }
     }
+    
+    private func shouldApplyFilters(item game: Game) -> Bool {
+        let checkFavorite = (game.isFavorited && filters.favoriteFilter) || !filters.favoriteFilter
+        let checkFinished = (game.isFinished && filters.finishedFilter) || !filters.finishedFilter
+        let checkRating = (Game.ratings(note: game.note) == filters.ratingFilter) || !filters.showRatingFilter
+        return checkFavorite && checkFinished && checkRating
+    }
+    
+    private func someApplyFilter() -> Bool {
+        return  !self.filters.favoriteFilter &&
+                !self.filters.finishedFilter &&
+                !self.filters.showRatingFilter &&
+                self.filters.sortedFilter == .alphabetical_AZ
+    }
 }
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView(defaults: SetupUserDefaults())
+        ContentView().environmentObject(UserPreferencesFilter())
     }
 }

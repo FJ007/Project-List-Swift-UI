@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Combine
 
 enum Key: String {
     case sorted = "filter.view.sorted"
@@ -16,9 +17,9 @@ enum Key: String {
     case rating = "filter.view.rating"
 }
 
-final class SetupUserDefaults {
+final class UserPreferencesFilter: ObservableObject {
     
-    var defaults: UserDefaults
+    @Published var defaults: UserDefaults
     
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults

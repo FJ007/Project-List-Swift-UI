@@ -23,8 +23,8 @@ struct CellView: View {
                     Image(game.image)
                         .resizable()
                         .aspectRatio(contentMode: .fill)
-                        .frame(width:60, height: 120)
-                        .padding(25)
+                        .frame(width:70, height: 120)
+                        .padding(15)
                         .clipped()
                         .layoutPriority(0)
                     Spacer()
@@ -81,7 +81,7 @@ struct CellView: View {
                         .padding(.bottom, 5)
                         HStack{
                             VStack (alignment: .leading) {
-                                Text("RATING".uppercased())
+                                Text("Rating".uppercased())
                                     .font(.caption)
                                     .fontWeight(.thin)
                                     .foregroundColor(.secondary)
@@ -117,6 +117,7 @@ struct CellView: View {
                         .padding(.trailing, 5)
                         Spacer()
                     }.layoutPriority(1)
+                    Spacer()
                 }
                 
         )

@@ -12,7 +12,6 @@ enum SortingOrderType: Int, CaseIterable {
     
     case alphabetical_AZ = 0
     case alphabetical_ZA = 1
-    case rating = 2
     
     init (type: Int) {
         switch type {
@@ -20,8 +19,6 @@ enum SortingOrderType: Int, CaseIterable {
             self = .alphabetical_AZ
         case 1:
             self = .alphabetical_ZA
-        case 2:
-            self = .rating
         default:
             self = .alphabetical_AZ
         }
@@ -33,8 +30,15 @@ enum SortingOrderType: Int, CaseIterable {
             return "A-Z"
         case .alphabetical_ZA:
             return "Z-A"
-        case .rating:
-            return "Rating"
+        }
+    }
+    
+    func sortingOrder() -> ((Game, Game) -> Bool) {
+        switch self {
+        case .alphabetical_AZ:
+            return {$0.name < $1.name}
+        case .alphabetical_ZA:
+            return {$0.name > $1.name}
         }
     }
 }
